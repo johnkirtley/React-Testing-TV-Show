@@ -1,13 +1,42 @@
-import React from 'react';
-import { fetchShow as mockFetchShow } from './api/fetchShow';
-import { render, wait, debug, fireEvent } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import App from './App';
+// import React from 'react';
+// import { fetchShow as mockFetchShow } from './api/fetchShow';
+// import { render, wait, debug, fireEvent } from '@testing-library/react';
+// import userEvent from '@testing-library/user-event';
+// import App from './App';
 
 
 // jest.mock('./api/fetchShow');
 
-const shows = {
+
+
+// test('App renders without crashing', async () => {
+//     mockFetchShow.mockResolvedValueOnce(shows);
+
+//     const { getByText, getAllByTestId, debug } = render(<App />);
+
+
+//     await wait(() => {
+//         const Dropdown = getByText(/select a season/i);
+//         userEvent.click(Dropdown);
+//     })
+
+//     const Pick = getByText(/season 1/i);
+//     userEvent.click(Pick);
+//     await wait(() => expect(getAllByTestId('episode')).toHaveLength(8));
+// })
+
+
+
+import React from 'react';
+import { render, wait } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import App from './App';
+import { fetchShow as mockFetchShow } from './api/fetchShow';
+
+jest.mock('./api/fetchShow');
+console.log("mockFetchShow", mockFetchShow);
+
+const show = {
     data:
     {
         id: 2993,
@@ -609,15 +638,14 @@ const shows = {
     }
 }
 
-test('App renders without crashing', async () => {
-    const { getByText, getAllByTestId, debug } = render(<App />);
-
-    await wait(() => {
-        const Dropdown = getByText(/select a season/i);
-        userEvent.click(Dropdown);
-    })
-
-    const Pick = getByText(/season 1/i);
-    userEvent.click(Pick);
-    await wait(() => expect(getAllByTestId('episode')).toHaveLength(8));
-})
+test('App fetches data and renders data', async () => {
+    mockFetchShow.mockResolvedValueOnce(show);
+    const { getByText, getAllByText } = render(<App />);
+    await wait();
+    expect(getAllByText(/stranger things/i)).toHaveLength(2);
+    userEvent.click(getByText(/select a season/i));
+    getByText(/season 1/i);
+    getByText(/season 2/i);
+    getByText(/season 3/i);
+    getByText(/season 4/i);
+});
