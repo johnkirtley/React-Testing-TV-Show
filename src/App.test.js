@@ -1,13 +1,14 @@
 import React from 'react';
 import { fetchShow as mockFetchShow } from './api/fetchShow';
-import { render, wait } from '@testing-library/react';
+import { render, wait, debug, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from './App';
 
 
 // jest.mock('./api/fetchShow');
 
-const shows = [
+const shows = {
+    data:
     {
         id: 2993,
         url: 'http://www.tvmaze.com/shows/2993/stranger-things',
@@ -606,12 +607,17 @@ const shows = [
             ]
         }
     }
-]
+}
 
 test('App renders without crashing', async () => {
-    // mockFetchShow.mockResolvedValueOnce(shows);
+    const { getByText, getAllByTestId, debug } = render(<App />);
 
-    const { } = render(<App />)
+    await wait(() => {
+        const Dropdown = getByText(/select a season/i);
+        userEvent.click(Dropdown);
+    })
 
-    // wait();
+    const Pick = getByText(/season 1/i);
+    userEvent.click(Pick);
+    await wait(() => expect(getAllByTestId('episode')).toHaveLength(8));
 })
